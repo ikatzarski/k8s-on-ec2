@@ -52,6 +52,30 @@ variable "volume_size" {
   default     = 50
 }
 
+variable "control_plane_private_ip" {
+  type        = string
+  description = "Private IP of the Control Plane."
+  default     = "10.0.1.10"
+}
+
+variable "control_plane_hostname" {
+  type        = string
+  description = "Hostname the Control Plane."
+  default     = "control-plane"
+}
+
+variable "worker_1_private_ip" {
+  type        = string
+  description = "Private IP of Worker 1 Node."
+  default     = "10.0.1.11"
+}
+
+variable "worker_1_hostname" {
+  type        = string
+  description = "Hostname of Worker 1 Node."
+  default     = "worker-1"
+}
+
 variable "control_plane_ingress_cidr" {
   type        = string
   description = "The IP addresses which can access the Control Plane."

@@ -1,6 +1,6 @@
 # Create Infra
 
-## Prerequisites
+## Check Prerequisites
 
 - Terraform
 - Generate a valid key-pair:
@@ -27,7 +27,7 @@ terraform init \
   -backend-config "key=<STATE_FOLDER>/terraform.state"
 ```
 
-## Terraform Commands
+## Execute Terraform Commands
 
 ```bash
 terraform init
@@ -38,6 +38,23 @@ terraform plan
 
 terraform apply
 ```
+
+## SSH into a Node
+
+```bash
+ssh -i ssh/key ubuntu@<NODE_PUBLIC_IP>
+```
+
+If this is the first time starting the node, make sure the `bootstrap.sh` script has finished running by checking the following file on the node:
+
+```bash
+cat /var/log/cloud-init-output.log
+
+# or
+tail -f /var/log/cloud-init-output.log
+```
+
+The commands of `bootstrap.sh` should be outputted in the log so you can search for them. All commands would be appended by `+ ` (plus + space) i.e., you can also search for this symbol.
 
 # Terraform Argument Reference
 

@@ -10,7 +10,17 @@ resource "aws_instance" "control_plane" {
   subnet_id                   = aws_subnet.public.id
   vpc_security_group_ids      = [aws_security_group.control_plane.id]
   associate_public_ip_address = true
-  private_ip                  = "10.0.1.10"
+  private_ip                  = var.control_plane_private_ip
+  user_data = templatefile(
+    "scripts/bootstrap.sh",
+    {
+      hostname                 = var.control_plane_hostname,
+      control_plane_private_ip = var.control_plane_private_ip,
+      control_plane_hostname   = var.control_plane_hostname,
+      worker_1_private_ip      = var.worker_1_private_ip,
+      worker_1_hostname        = var.worker_1_hostname
+    }
+  )
 
   root_block_device {
     volume_type = var.volume_type
@@ -29,7 +39,17 @@ resource "aws_instance" "worker_1" {
   subnet_id                   = aws_subnet.public.id
   vpc_security_group_ids      = [aws_security_group.worker.id]
   associate_public_ip_address = true
-  private_ip                  = "10.0.1.11"
+  private_ip                  = var.worker_1_private_ip
+  user_data = templatefile(
+    "scripts/bootstrap.sh",
+    {
+      hostname                 = var.worker_1_hostname,
+      control_plane_private_ip = var.control_plane_private_ip,
+      control_plane_hostname   = var.control_plane_hostname,
+      worker_1_private_ip      = var.worker_1_private_ip,
+      worker_1_hostname        = var.worker_1_hostname
+    }
+  )
 
   root_block_device {
     volume_type = var.volume_type
