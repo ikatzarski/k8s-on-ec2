@@ -30,6 +30,15 @@ resource "aws_vpc_security_group_ingress_rule" "ssh" {
   cidr_ipv4         = var.control_plane_ingress_cidr
 }
 
+resource "aws_vpc_security_group_ingress_rule" "api_server" {
+  security_group_id = aws_security_group.control_plane.id
+  description       = "Allow K8s Api Server access from specific IP."
+  from_port         = 6443
+  to_port           = 6443
+  ip_protocol       = "tcp"
+  cidr_ipv4         = var.control_plane_ingress_cidr
+}
+
 resource "aws_vpc_security_group_ingress_rule" "from_workers" {
   security_group_id            = aws_security_group.control_plane.id
   description                  = "Allow access from the Worker Nodes."
