@@ -102,7 +102,9 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_ami"></a> [ami](#input\_ami) | Ubuntu 22.04 LTS from 2023-03-03. | `string` | `"ami-050096f31d010b533"` | no |
+| <a name="input_control_plane_hostname"></a> [control\_plane\_hostname](#input\_control\_plane\_hostname) | Hostname the Control Plane. | `string` | `"control-plane"` | no |
 | <a name="input_control_plane_ingress_cidr"></a> [control\_plane\_ingress\_cidr](#input\_control\_plane\_ingress\_cidr) | The IP addresses which can access the Control Plane. | `string` | n/a | yes |
+| <a name="input_control_plane_private_ip"></a> [control\_plane\_private\_ip](#input\_control\_plane\_private\_ip) | Private IP of the Control Plane. | `string` | `"10.0.1.10"` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | The environment name. | `string` | `"dev"` | no |
 | <a name="input_instance_type"></a> [instance\_type](#input\_instance\_type) | The instance type. | `string` | `"t2.medium"` | no |
 | <a name="input_project"></a> [project](#input\_project) | The project name. | `string` | `"k8s"` | no |
@@ -111,10 +113,15 @@ No modules.
 | <a name="input_volume_size"></a> [volume\_size](#input\_volume\_size) | Size of the volume in gibibytes (GiB). | `number` | `50` | no |
 | <a name="input_volume_type"></a> [volume\_type](#input\_volume\_type) | The volume type. | `string` | `"gp2"` | no |
 | <a name="input_vpc_cidr_block"></a> [vpc\_cidr\_block](#input\_vpc\_cidr\_block) | The VPC CIDR block. | `string` | `"10.0.0.0/16"` | no |
+| <a name="input_worker_1_hostname"></a> [worker\_1\_hostname](#input\_worker\_1\_hostname) | Hostname of Worker 1 Node. | `string` | `"worker-1"` | no |
+| <a name="input_worker_1_private_ip"></a> [worker\_1\_private\_ip](#input\_worker\_1\_private\_ip) | Private IP of Worker 1 Node. | `string` | `"10.0.1.11"` | no |
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_control_plane_public_ip"></a> [control\_plane\_public\_ip](#output\_control\_plane\_public\_ip) | Public IP of the Control Plane. |
+| <a name="output_worker_1_public_ip"></a> [worker\_1\_public\_ip](#output\_worker\_1\_public\_ip) | Public IP of the Worker 1 Node. |
 <!-- END_TF_DOCS -->
 
 # Helper Commands
