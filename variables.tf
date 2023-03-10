@@ -76,7 +76,7 @@ variable "worker_1_hostname" {
   default     = "worker-1"
 }
 
-variable "control_plane_ingress_cidr" {
+variable "ingress_access_cidr" {
   type        = string
-  description = "The IP addresses which can access the Control Plane."
+  description = "The IP address range allowed access to the cluster."
 }

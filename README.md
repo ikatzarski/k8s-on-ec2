@@ -15,7 +15,7 @@ chmod 400 ssh/key*
 
 ```bash
 touch terraform.tfvars
-echo 'control_plane_ingress_cidr = "<YOUR_IP>/32"' > terraform.tfvars
+echo 'ingress_access_cidr = "<YOUR_IP>/32"' > terraform.tfvars
 ```
 
 - The current setup uses a local backend. If you would like to use an s3 Terraform backed, for example, uncomment the lines in `tfstate.tf`. After that the Terraform init command will look like this:
@@ -92,10 +92,12 @@ No modules.
 | [aws_subnet.public](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet) | resource |
 | [aws_vpc.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc) | resource |
 | [aws_vpc_security_group_egress_rule.all_egress](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_egress_rule) | resource |
+| [aws_vpc_security_group_ingress_rule.api_server](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_ingress_rule) | resource |
 | [aws_vpc_security_group_ingress_rule.from_control_plane](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_ingress_rule) | resource |
 | [aws_vpc_security_group_ingress_rule.from_worker_self](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_ingress_rule) | resource |
 | [aws_vpc_security_group_ingress_rule.from_workers](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_ingress_rule) | resource |
-| [aws_vpc_security_group_ingress_rule.public](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_ingress_rule) | resource |
+| [aws_vpc_security_group_ingress_rule.node_port](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_ingress_rule) | resource |
+| [aws_vpc_security_group_ingress_rule.ssh](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_ingress_rule) | resource |
 
 ## Inputs
 
@@ -103,9 +105,9 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_ami"></a> [ami](#input\_ami) | Ubuntu 22.04 LTS from 2023-03-03. | `string` | `"ami-050096f31d010b533"` | no |
 | <a name="input_control_plane_hostname"></a> [control\_plane\_hostname](#input\_control\_plane\_hostname) | Hostname the Control Plane. | `string` | `"control-plane"` | no |
-| <a name="input_control_plane_ingress_cidr"></a> [control\_plane\_ingress\_cidr](#input\_control\_plane\_ingress\_cidr) | The IP addresses which can access the Control Plane. | `string` | n/a | yes |
 | <a name="input_control_plane_private_ip"></a> [control\_plane\_private\_ip](#input\_control\_plane\_private\_ip) | Private IP of the Control Plane. | `string` | `"10.0.1.10"` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | The environment name. | `string` | `"dev"` | no |
+| <a name="input_ingress_access_cidr"></a> [ingress\_access\_cidr](#input\_ingress\_access\_cidr) | The IP address range allowed access to the cluster. | `string` | n/a | yes |
 | <a name="input_instance_type"></a> [instance\_type](#input\_instance\_type) | The instance type. | `string` | `"t2.medium"` | no |
 | <a name="input_project"></a> [project](#input\_project) | The project name. | `string` | `"k8s"` | no |
 | <a name="input_pub_subnet_cidr"></a> [pub\_subnet\_cidr](#input\_pub\_subnet\_cidr) | The Public Subnet CIDR block. | `string` | `"10.0.1.0/24"` | no |

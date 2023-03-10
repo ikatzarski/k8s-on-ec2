@@ -27,7 +27,7 @@ resource "aws_vpc_security_group_ingress_rule" "ssh" {
   from_port         = 22
   to_port           = 22
   ip_protocol       = "tcp"
-  cidr_ipv4         = var.control_plane_ingress_cidr
+  cidr_ipv4         = var.ingress_access_cidr
 }
 
 resource "aws_vpc_security_group_ingress_rule" "api_server" {
@@ -36,7 +36,7 @@ resource "aws_vpc_security_group_ingress_rule" "api_server" {
   from_port         = 6443
   to_port           = 6443
   ip_protocol       = "tcp"
-  cidr_ipv4         = var.control_plane_ingress_cidr
+  cidr_ipv4         = var.ingress_access_cidr
 }
 
 resource "aws_vpc_security_group_ingress_rule" "node_port" {
@@ -45,7 +45,7 @@ resource "aws_vpc_security_group_ingress_rule" "node_port" {
   from_port         = 30000
   to_port           = 32767
   ip_protocol       = "tcp"
-  cidr_ipv4         = var.control_plane_ingress_cidr
+  cidr_ipv4         = var.ingress_access_cidr
 }
 
 resource "aws_vpc_security_group_ingress_rule" "from_workers" {
