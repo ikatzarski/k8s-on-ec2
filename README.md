@@ -82,6 +82,7 @@ No modules.
 |------|------|
 | [aws_instance.control_plane](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance) | resource |
 | [aws_instance.worker_1](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance) | resource |
+| [aws_instance.worker_2](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance) | resource |
 | [aws_internet_gateway.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/internet_gateway) | resource |
 | [aws_key_pair.key](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/key_pair) | resource |
 | [aws_route.public](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route) | resource |
@@ -117,6 +118,8 @@ No modules.
 | <a name="input_vpc_cidr_block"></a> [vpc\_cidr\_block](#input\_vpc\_cidr\_block) | The VPC CIDR block. | `string` | `"10.0.0.0/16"` | no |
 | <a name="input_worker_1_hostname"></a> [worker\_1\_hostname](#input\_worker\_1\_hostname) | Hostname of Worker 1 Node. | `string` | `"worker-1"` | no |
 | <a name="input_worker_1_private_ip"></a> [worker\_1\_private\_ip](#input\_worker\_1\_private\_ip) | Private IP of Worker 1 Node. | `string` | `"10.0.1.11"` | no |
+| <a name="input_worker_2_hostname"></a> [worker\_2\_hostname](#input\_worker\_2\_hostname) | Hostname of Worker 2 Node. | `string` | `"worker-2"` | no |
+| <a name="input_worker_2_private_ip"></a> [worker\_2\_private\_ip](#input\_worker\_2\_private\_ip) | Private IP of Worker 2 Node. | `string` | `"10.0.1.12"` | no |
 
 ## Outputs
 
@@ -124,6 +127,7 @@ No modules.
 |------|-------------|
 | <a name="output_control_plane_public_ip"></a> [control\_plane\_public\_ip](#output\_control\_plane\_public\_ip) | Public IP of the Control Plane. |
 | <a name="output_worker_1_public_ip"></a> [worker\_1\_public\_ip](#output\_worker\_1\_public\_ip) | Public IP of the Worker 1 Node. |
+| <a name="output_worker_2_public_ip"></a> [worker\_2\_public\_ip](#output\_worker\_2\_public\_ip) | Public IP of the Worker 2 Node. |
 <!-- END_TF_DOCS -->
 
 # Helper Commands

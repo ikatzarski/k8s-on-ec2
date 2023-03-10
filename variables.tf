@@ -76,6 +76,18 @@ variable "worker_1_hostname" {
   default     = "worker-1"
 }
 
+variable "worker_2_private_ip" {
+  type        = string
+  description = "Private IP of Worker 2 Node."
+  default     = "10.0.1.12"
+}
+
+variable "worker_2_hostname" {
+  type        = string
+  description = "Hostname of Worker 2 Node."
+  default     = "worker-2"
+}
+
 variable "ingress_access_cidr" {
   type        = string
   description = "The IP address range allowed access to the cluster."
