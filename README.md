@@ -2,7 +2,7 @@
 
 ## Check Prerequisites
 
-- Terraform
+- Terraform ([tfswitch](https://tfswitch.warrensbox.com/Install/) is useful for managing Terraform's version)
 - Generate a valid key-pair:
 
 ```bash
