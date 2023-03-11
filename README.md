@@ -54,7 +54,15 @@ cat /var/log/cloud-init-output.log
 tail -f /var/log/cloud-init-output.log
 ```
 
-The commands of `bootstrap.sh` should be outputted in the log so you can search for them. All commands would be appended by `+ ` (plus + space) i.e., you can also search for this symbol.
+The commands of `bootstrap.sh` should be outputted in the log so you can search for them. All commands would be appended by `+ ` (plus + space) i.e., you can also search for this symbol. `boostrap.sh` would have finished running after `/var/log/cloud-init-output.log` shows a message similar to this one:
+
+```bash
+Cloud-init v. 22.4.2-0ubuntu0~22.04.1 finished at Sat, 11 Mar 2023 16:13:21 +0000. Datasource DataSourceEc2Local.  Up 105.28 seconds
+```
+
+The Control Plane node would take a bit longer to finish as it requires `kubeadm` to initialize it.
+
+> **NOTE:** The `bootstrap.sh` logic depends on the Control Plane node hostname to be `control-plane`.
 
 # Terraform Argument Reference
 
