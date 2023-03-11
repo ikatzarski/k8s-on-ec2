@@ -1,108 +1,165 @@
 #!/bin/bash -x
 
-########## Initial setup
+####################
+########## VARIABLES
 
-# Disable swap
-swapoff -a
+HOSTNAME="${hostname}"
+CONTROL_PLANE_PRIVATE_IP="${control_plane_private_ip}"
+CONTROL_PLANE_HOSTNAME="${control_plane_hostname}"
+CONTROL_PLANE_EXPECTED_HOSTNAME="control-plane"
+WORKER_1_PRIVATE_IP="${worker_1_private_ip}"
+WORKER_1_HOSTNAME="${worker_1_hostname}"
+WORKER_2_PRIVATE_IP="${worker_2_private_ip}"
+WORKER_2_HOSTNAME="${worker_2_hostname}"
 
-# Set up hostnames
-echo "
-${control_plane_private_ip} ${control_plane_hostname}
-${worker_1_private_ip} ${worker_1_hostname}
-${worker_2_private_ip} ${worker_2_hostname}" >>/etc/hosts
+#############################
+########## HOST CONFIGURATION
 
-# Override hostname
-hostnamectl set-hostname "${hostname}"
+disable_swap() {
+  swapoff -a
+}
 
-########## CRI Prerequisites
+provide_hostnames_for_all_nodes() {
+  echo "
+$CONTROL_PLANE_PRIVATE_IP $CONTROL_PLANE_HOSTNAME
+$WORKER_1_PRIVATE_IP $WORKER_1_HOSTNAME
+$WORKER_2_PRIVATE_IP $WORKER_2_HOSTNAME" >>/etc/hosts
+}
 
-## Forward IPv4 and let iptables see bridged traffic
-# Reference: https://kubernetes.io/docs/setup/production-environment/container-runtimes/#forwarding-ipv4-and-letting-iptables-see-bridged-traffic
+set_hostname() {
+  hostnamectl set-hostname "$HOSTNAME"
+}
 
-cat <<EOF | tee /etc/modules-load.d/k8s.conf
+SET_UP_HOST() {
+  disable_swap
+  provide_hostnames_for_all_nodes
+  set_hostname
+}
+
+############################
+########## CRI CONFIGURATION
+
+# References:
+# https://kubernetes.io/docs/setup/production-environment/container-runtimes/#forwarding-ipv4-and-letting-iptables-see-bridged-traffic
+forward_ipv4_and_let_iptables_see_bridged_traffic() {
+  cat <<EOF | tee /etc/modules-load.d/k8s.conf
 overlay
 br_netfilter
 EOF
 
-modprobe overlay
-modprobe br_netfilter
+  modprobe overlay
+  modprobe br_netfilter
 
-# sysctl params required by setup, params persist across reboots
-cat <<EOF | tee /etc/sysctl.d/k8s.conf
+  # sysctl params required by setup, params persist across reboots
+  cat <<EOF | tee /etc/sysctl.d/k8s.conf
 net.bridge.bridge-nf-call-iptables  = 1
 net.bridge.bridge-nf-call-ip6tables = 1
 net.ipv4.ip_forward                 = 1
 EOF
 
-# Apply sysctl params without reboot
-sysctl --system
+  # Apply sysctl params without reboot
+  sysctl --system
+}
 
-########## Install ContainerD
-# Reference: https://kubernetes.io/docs/setup/production-environment/container-runtimes/#containerd
+# References:
+# https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
+install_cri_prerequisites() {
+  apt update
+  apt install -y ca-certificates curl gnupg lsb-release
+}
 
-## Install prerequisites
-# Reference: https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
+add_docker_gpg_key() {
+  mkdir -m 0755 -p /etc/apt/keyrings
+  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+}
 
-# Install prerequisite packages to allow apt to use a repo over HTTPS
-apt update
-apt install -y \
-  ca-certificates \
-  curl \
-  gnupg \
-  lsb-release
-
-# Add Docker's official GPG key
-mkdir -m 0755 -p /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-
-# Add the Docker apt repository
-echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+add_docker_apt_repo() {
+  echo \
+    "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
   $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list >/dev/null
+  apt update
+}
 
-# Update the apt package index
-apt update
+install_containerd() {
+  apt install -y containerd.io
+}
 
-## Install ContainerD
+# References:
+# https://kubernetes.io/docs/setup/production-environment/container-runtimes/#containerd
+# https://github.com/containerd/containerd/blob/main/docs/getting-started.md#customizing-containerd
+configure_containerd() {
+  containerd config default >/etc/containerd/config.toml
 
-apt install -y containerd.io
+  # use the systemd cgroup driver
+  sed -i 's/SystemdCgroup \= false/SystemdCgroup \= true/g' /etc/containerd/config.toml
+  systemctl restart containerd
+}
 
-# Configure ContainerD with default config
-# Reference: https://github.com/containerd/containerd/blob/main/docs/getting-started.md#customizing-containerd
-containerd config default >/etc/containerd/config.toml
+SET_UP_CRI() {
+  forward_ipv4_and_let_iptables_see_bridged_traffic
+  install_cri_prerequisites
+  add_docker_gpg_key
+  add_docker_apt_repo
+  install_containerd
+  configure_containerd
+}
 
-# Make ContainerD use the systemd cgroup driver
-sed -i 's/SystemdCgroup \= false/SystemdCgroup \= true/g' /etc/containerd/config.toml
-systemctl restart containerd
+################################
+########## KUBEADM CONFIGURATION
 
-########## Install kubeadm, kubelet and kubectl
-# Reference: https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/#installing-kubeadm-kubelet-and-kubectl
+install_kubeadm_prerequisites() {
+  apt update
+  apt install -y apt-transport-https ca-certificates curl
+}
 
-# Install prerequisite packages
-apt update
-apt install -y apt-transport-https ca-certificates curl
+add_gcp_gpg_key() {
+  curl -fsSLo /etc/apt/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+}
 
-# Download the GCP GPG key
-curl -fsSLo /etc/apt/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+add_kubernetes_apt_repo() {
+  echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list
+}
 
-# Add the K8s apt repo
-echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list
+install_kubelet_kubeadm_kubectl() {
+  apt update
+  apt install -y kubelet kubeadm kubectl
+  apt-mark hold kubelet kubeadm kubectl
+}
 
-# Install kubelet, kubeadm and kubectl
-apt update
-apt install -y kubelet kubeadm kubectl
-apt-mark hold kubelet kubeadm kubectl
+# References:
+# https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/#installing-kubeadm-kubelet-and-kubectl
+SET_UP_KUBEADM() {
+  install_kubeadm_prerequisites
+  add_gcp_gpg_key
+  add_kubernetes_apt_repo
+  install_kubelet_kubeadm_kubectl
+}
 
-########## Initialize the Control Plane
+######################################
+########## CONTROL PLANE CONFIGURATION
 
-if [[ $(hostname) == "control-plane" ]]; then
+initialize_the_control_plane() {
   kubeadm init
-fi
+}
 
-########## Set kubeconfig for ubuntu on the Control Plane
-
-if [[ $(hostname) == "control-plane" ]]; then
+create_ubuntu_kube_config() {
   mkdir /home/ubuntu/.kube
   cp /etc/kubernetes/admin.conf /home/ubuntu/.kube/config
   chown ubuntu:ubuntu /home/ubuntu/.kube/config
+}
+
+SET_UP_CONTROL_PLANE() {
+  initialize_the_control_plane
+  create_ubuntu_kube_config
+}
+
+#####################
+########## FULL SETUP
+
+SET_UP_HOST
+SET_UP_CRI
+SET_UP_KUBEADM
+
+if [[ $(hostname) == "$CONTROL_PLANE_EXPECTED_HOSTNAME" ]]; then
+  SET_UP_CONTROL_PLANE
 fi
