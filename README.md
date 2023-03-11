@@ -3,7 +3,7 @@
 ## Check Prerequisites
 
 - Terraform ([tfswitch](https://tfswitch.warrensbox.com/Install/) is useful for managing Terraform's version)
-- Generate a valid key-pair:
+- Generate a valid key-pair in this repo's folder (the `.gitignore` file ignores the `ssh` folder):
 
 ```bash
 mkdir ssh
