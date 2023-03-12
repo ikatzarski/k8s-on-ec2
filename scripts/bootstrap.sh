@@ -153,6 +153,20 @@ SET_UP_CONTROL_PLANE() {
   create_ubuntu_kube_config
 }
 
+############################
+########## CNI CONFIGURATION
+
+# Reference:
+# https://www.weave.works/docs/net/latest/kubernetes/kube-addon/#-installation
+# Default CIDR: 10.32.0.0/12
+install_weavenet_cni() {
+  kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml --kubeconfig=/etc/kubernetes/admin.conf
+}
+
+SET_UP_CNI() {
+  install_weavenet_cni
+}
+
 #####################
 ########## FULL SETUP
 
@@ -162,4 +176,5 @@ SET_UP_KUBEADM
 
 if [[ $(hostname) == "$CONTROL_PLANE_EXPECTED_HOSTNAME" ]]; then
   SET_UP_CONTROL_PLANE
+  SET_UP_CNI
 fi
