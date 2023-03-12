@@ -64,6 +64,16 @@ The Control Plane node would take a bit longer to finish as it requires `kubeadm
 
 > **NOTE:** The `bootstrap.sh` logic depends on the Control Plane node hostname to be `control-plane`.
 
+## Join the Worker Nodes to the Control Plane
+
+Get a new token and a command to join new Worker Nodes to the Control Plane by executing the following command on the Control Plane node:
+
+```bash
+kubeadm token create --print-join-command
+```
+
+Execute the printed out command on each EC2 instance that will be a Worker Node. The command would require `sudo` privileges.
+
 # Terraform Argument Reference
 
 <!-- BEGIN_TF_DOCS -->
