@@ -19,13 +19,13 @@ variable "region" {
 variable "vpc_cidr_block" {
   type        = string
   description = "The VPC CIDR block."
-  default     = "10.0.0.0/16"
+  default     = "172.31.0.0/16"
 }
 
 variable "pub_subnet_cidr" {
   type        = string
   description = "The Public Subnet CIDR block."
-  default     = "10.0.1.0/24"
+  default     = "172.31.1.0/24"
 }
 
 variable "ami" {
@@ -55,7 +55,7 @@ variable "volume_size" {
 variable "control_plane_private_ip" {
   type        = string
   description = "Private IP of the Control Plane."
-  default     = "10.0.1.10"
+  default     = "172.31.1.10"
 }
 
 variable "control_plane_hostname" {
@@ -67,7 +67,7 @@ variable "control_plane_hostname" {
 variable "worker_1_private_ip" {
   type        = string
   description = "Private IP of Worker 1 Node."
-  default     = "10.0.1.11"
+  default     = "172.31.1.11"
 }
 
 variable "worker_1_hostname" {
@@ -79,7 +79,7 @@ variable "worker_1_hostname" {
 variable "worker_2_private_ip" {
   type        = string
   description = "Private IP of Worker 2 Node."
-  default     = "10.0.1.12"
+  default     = "172.31.1.12"
 }
 
 variable "worker_2_hostname" {

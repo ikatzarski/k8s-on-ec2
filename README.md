@@ -114,20 +114,20 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_ami"></a> [ami](#input\_ami) | Ubuntu 22.04 LTS from 2023-03-03. | `string` | `"ami-050096f31d010b533"` | no |
 | <a name="input_control_plane_hostname"></a> [control\_plane\_hostname](#input\_control\_plane\_hostname) | Hostname the Control Plane. | `string` | `"control-plane"` | no |
-| <a name="input_control_plane_private_ip"></a> [control\_plane\_private\_ip](#input\_control\_plane\_private\_ip) | Private IP of the Control Plane. | `string` | `"10.0.1.10"` | no |
+| <a name="input_control_plane_private_ip"></a> [control\_plane\_private\_ip](#input\_control\_plane\_private\_ip) | Private IP of the Control Plane. | `string` | `"172.31.1.10"` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | The environment name. | `string` | `"dev"` | no |
 | <a name="input_ingress_access_cidr"></a> [ingress\_access\_cidr](#input\_ingress\_access\_cidr) | The IP address range allowed access to the cluster. | `string` | n/a | yes |
 | <a name="input_instance_type"></a> [instance\_type](#input\_instance\_type) | The instance type. | `string` | `"t2.medium"` | no |
 | <a name="input_project"></a> [project](#input\_project) | The project name. | `string` | `"k8s"` | no |
-| <a name="input_pub_subnet_cidr"></a> [pub\_subnet\_cidr](#input\_pub\_subnet\_cidr) | The Public Subnet CIDR block. | `string` | `"10.0.1.0/24"` | no |
+| <a name="input_pub_subnet_cidr"></a> [pub\_subnet\_cidr](#input\_pub\_subnet\_cidr) | The Public Subnet CIDR block. | `string` | `"172.31.1.0/24"` | no |
 | <a name="input_region"></a> [region](#input\_region) | The region the infrastructure will be deployed in. | `string` | `"eu-central-1"` | no |
 | <a name="input_volume_size"></a> [volume\_size](#input\_volume\_size) | Size of the volume in gibibytes (GiB). | `number` | `50` | no |
 | <a name="input_volume_type"></a> [volume\_type](#input\_volume\_type) | The volume type. | `string` | `"gp2"` | no |
-| <a name="input_vpc_cidr_block"></a> [vpc\_cidr\_block](#input\_vpc\_cidr\_block) | The VPC CIDR block. | `string` | `"10.0.0.0/16"` | no |
+| <a name="input_vpc_cidr_block"></a> [vpc\_cidr\_block](#input\_vpc\_cidr\_block) | The VPC CIDR block. | `string` | `"172.31.0.0/16"` | no |
 | <a name="input_worker_1_hostname"></a> [worker\_1\_hostname](#input\_worker\_1\_hostname) | Hostname of Worker 1 Node. | `string` | `"worker-1"` | no |
-| <a name="input_worker_1_private_ip"></a> [worker\_1\_private\_ip](#input\_worker\_1\_private\_ip) | Private IP of Worker 1 Node. | `string` | `"10.0.1.11"` | no |
+| <a name="input_worker_1_private_ip"></a> [worker\_1\_private\_ip](#input\_worker\_1\_private\_ip) | Private IP of Worker 1 Node. | `string` | `"172.31.1.11"` | no |
 | <a name="input_worker_2_hostname"></a> [worker\_2\_hostname](#input\_worker\_2\_hostname) | Hostname of Worker 2 Node. | `string` | `"worker-2"` | no |
-| <a name="input_worker_2_private_ip"></a> [worker\_2\_private\_ip](#input\_worker\_2\_private\_ip) | Private IP of Worker 2 Node. | `string` | `"10.0.1.12"` | no |
+| <a name="input_worker_2_private_ip"></a> [worker\_2\_private\_ip](#input\_worker\_2\_private\_ip) | Private IP of Worker 2 Node. | `string` | `"172.31.1.12"` | no |
 
 ## Outputs
 
