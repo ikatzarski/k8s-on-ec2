@@ -74,6 +74,38 @@ kubeadm token create --print-join-command
 
 Execute the printed out command on each EC2 instance that will be a Worker Node. The command would require `sudo` privileges.
 
+## Install NGINX Ingress
+
+The NGINX Ingress chart being installed comes from [here](https://github.com/kubernetes/ingress-nginx/tree/main/charts/ingress-nginx). Run the following commands on the Control Plane:
+
+```bash
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
+helm upgrade \
+  --install ingress-nginx ingress-nginx/ingress-nginx \
+  --set controller.service.type="NodePort" \
+  --set controller.service.nodePorts.http=30000 \
+  --namespace ingress-nginx \
+  --create-namespace \
+  --wait \
+  --atomic
+```
+
+If you add an Ingress resource and do not have a Load Balancer installed, you will have to edit your `/etc/hosts` file since Ingress accepts only hostnames and cannot accept IP addresses. For example, you could add the following entry in your hosts file:
+
+```bash
+123.456.789.101 someapp.com
+```
+
+In this case, you will have to provide the following host in the Ingress resource:
+
+```yaml
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: someapp.com
+```
+
 # Terraform Argument Reference
 
 <!-- BEGIN_TF_DOCS -->
