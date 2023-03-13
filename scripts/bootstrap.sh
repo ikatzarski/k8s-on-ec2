@@ -167,6 +167,21 @@ SET_UP_CNI() {
   install_weavenet_cni
 }
 
+###########################
+########## ADDITIONAL TOOLS
+
+install_helm() {
+  curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | tee /usr/share/keyrings/helm.gpg >/dev/null
+  apt install apt-transport-https --yes
+  echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list
+  apt update
+  apt install helm
+}
+
+SET_UP_ADDITIONAL_TOOLS() {
+  install_helm
+}
+
 #####################
 ########## FULL SETUP
 
@@ -177,4 +192,5 @@ SET_UP_KUBEADM
 if [[ $(hostname) == "$CONTROL_PLANE_EXPECTED_HOSTNAME" ]]; then
   SET_UP_CONTROL_PLANE
   SET_UP_CNI
+  SET_UP_ADDITIONAL_TOOLS
 fi
