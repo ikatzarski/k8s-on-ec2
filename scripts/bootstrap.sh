@@ -145,7 +145,7 @@ initialize_the_control_plane() {
 create_ubuntu_kube_config() {
   mkdir /home/ubuntu/.kube
   cp /etc/kubernetes/admin.conf /home/ubuntu/.kube/config
-  chown ubuntu:ubuntu /home/ubuntu/.kube/config
+  chown -R ubuntu:ubuntu /home/ubuntu/.kube
 }
 
 SET_UP_CONTROL_PLANE() {
