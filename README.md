@@ -46,7 +46,7 @@ terraform validate
 
 terraform plan -destroy -out=plan.out
 
-terraform apply -destroy plan.out
+terraform apply plan.out
 ```
  
 ## SSH into a Node
