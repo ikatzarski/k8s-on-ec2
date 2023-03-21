@@ -27,18 +27,28 @@ terraform init \
   -backend-config "key=<STATE_FOLDER>/terraform.state"
 ```
 
-## Execute Terraform Commands
+## Create Infra
 
 ```bash
 terraform init
 
 terraform validate
 
-terraform plan
+terraform plan -out=plan.out
 
-terraform apply
+terraform apply plan.out
 ```
 
+## Destroy Infra
+
+```bash
+terraform validate
+
+terraform plan -destroy -out=plan.out
+
+terraform apply -destroy plan.out
+```
+ 
 ## SSH into a Node
 
 ```bash
