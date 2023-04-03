@@ -1,0 +1,55 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: busybox
+  labels:
+    app: busybox
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: busybox
+  template:
+    metadata:
+      labels:
+        app: busybox
+    spec:
+      containers:
+      - name: busybox
+        image: busybox
+        command: ['sh', '-c']
+        args:
+        - printenv MYSQL_HOST MYSQL_USER MYSQL_PASSWORD;
+          cat /mysql/db-config/db.conf;
+          cat /mysql/db-secret/secret.conf;
+          tail -f /dev/null;
+        env:
+        - name: MYSQL_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: config
+              key: db_host
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: secret
+              key: username
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: secret
+              key: password
+        volumeMounts:
+        - name: config-file
+          mountPath: /mysql/db-config
+        - name: secret-file
+          mountPath: /mysql/db-secret
+          readOnly: true
+      volumes:
+      - name: config-file
+        configMap:
+          name: config-file
+      - name: secret-file
+        secret:
+          secretName: secret-file
