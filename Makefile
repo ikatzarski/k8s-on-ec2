@@ -15,12 +15,14 @@ init-s3:
 	terraform validate
 
 apply: init
-	terraform plan -out=plan.out
-	terraform apply plan.out
+	# terraform plan -out=plan.out
+	# terraform apply plan.out
+	terraform apply
 
 destroy: init
-	terraform plan -destroy -out=plan.out
-	terraform apply plan.out
+	# terraform plan -destroy -out=plan.out
+	# terraform apply plan.out
+	terraform destroy
 
 get-private-key:
 	rm -f ssh-key
