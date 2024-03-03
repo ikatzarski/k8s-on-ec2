@@ -1,14 +1,15 @@
 output "control_plane_public_ip" {
-  value       = aws_instance.control_plane.public_ip
   description = "Public IP of the Control Plane."
+  value       = module.control_plane.public_ip
 }
 
-output "worker_1_public_ip" {
-  value       = aws_instance.worker_1.public_ip
-  description = "Public IP of the Worker 1 Node."
+output "worker_public_ip" {
+  description = "Public IP of the Workers."
+  value       = values(module.worker)[*].public_ip
 }
 
-output "worker_2_public_ip" {
-  value       = aws_instance.worker_2.public_ip
-  description = "Public IP of the Worker 2 Node."
+output "private_key" {
+  description = "The private key needed to SSH into the nodes."
+  value       = tls_private_key.main.private_key_pem
+  sensitive   = true
 }

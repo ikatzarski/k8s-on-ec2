@@ -5,11 +5,7 @@
 .idea
 
 # Terraform
-terraform.tfstate
-terraform.tfstate.backup
-terraform.tfvars
-.terraform
-.terraform.lock.hcl
-.terraform.tfstate.lock.info
+.terraform*
+terraform.*
 plan.out
-ssh
+ssh-key

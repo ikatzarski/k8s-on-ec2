@@ -1,18 +1,18 @@
 resource "aws_security_group" "control_plane" {
-  name   = "${local.prefix}-control-plane"
-  vpc_id = aws_vpc.main.id
+  name   = "${var.prefix}-control-plane"
+  vpc_id = var.vpc_id
 
   tags = {
-    Name = "${local.prefix}-control-plane"
+    Name = "${var.prefix}-control-plane"
   }
 }
 
 resource "aws_security_group" "worker" {
-  name   = "${local.prefix}-worker"
-  vpc_id = aws_vpc.main.id
+  name   = "${var.prefix}-worker"
+  vpc_id = var.vpc_id
 
   tags = {
-    Name = "${local.prefix}-worker"
+    Name = "${var.prefix}-worker"
   }
 }
 

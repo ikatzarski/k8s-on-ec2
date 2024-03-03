@@ -22,34 +22,16 @@ variable "vpc_cidr_block" {
   default     = "172.31.0.0/16"
 }
 
-variable "pub_subnet_cidr" {
+variable "public_subnet_cidr" {
   type        = string
   description = "The Public Subnet CIDR block."
   default     = "172.31.1.0/24"
 }
 
-variable "ami" {
-  type        = string
-  description = "Ubuntu 22.04 LTS from 2023-03-03."
-  default     = "ami-050096f31d010b533"
-}
-
 variable "instance_type" {
   type        = string
-  description = "The instance type."
-  default     = "t2.medium"
-}
-
-variable "volume_type" {
-  type        = string
-  description = "The volume type."
-  default     = "gp2"
-}
-
-variable "volume_size" {
-  type        = number
-  description = "Size of the volume in gibibytes (GiB)."
-  default     = 50
+  description = "Instance type to use for the instance."
+  default     = "t3.medium"
 }
 
 variable "control_plane_private_ip" {
@@ -58,35 +40,35 @@ variable "control_plane_private_ip" {
   default     = "172.31.1.10"
 }
 
-variable "control_plane_hostname" {
-  type        = string
-  description = "Hostname the Control Plane."
-  default     = "control-plane"
+# variable "control_plane_hostname" {
+#   type        = string
+#   description = "Hostname the Control Plane."
+#   default     = "control-plane"
+# }
+
+variable "worker_suffixes" {
+  type        = list(string)
+  description = "The suffix appended to worker names and IPs."
+  default     = ["20", "21"]
 }
 
-variable "worker_1_private_ip" {
+variable "worker_private_ip_start" {
   type        = string
-  description = "Private IP of Worker 1 Node."
-  default     = "172.31.1.11"
+  description = "The beginning of each worker's private IP."
+  default     = "172.31.1."
 }
 
-variable "worker_1_hostname" {
-  type        = string
-  description = "Hostname of Worker 1 Node."
-  default     = "worker-1"
-}
+# variable "worker_1_hostname" {
+#   type        = string
+#   description = "Hostname of Worker 1 Node."
+#   default     = "worker-1"
+# }
 
-variable "worker_2_private_ip" {
-  type        = string
-  description = "Private IP of Worker 2 Node."
-  default     = "172.31.1.12"
-}
-
-variable "worker_2_hostname" {
-  type        = string
-  description = "Hostname of Worker 2 Node."
-  default     = "worker-2"
-}
+# variable "worker_2_hostname" {
+#   type        = string
+#   description = "Hostname of Worker 2 Node."
+#   default     = "worker-2"
+# }
 
 variable "ingress_access_cidr" {
   type        = string
