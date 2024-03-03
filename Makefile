@@ -32,5 +32,10 @@ get-private-key:
 ssh-control-plane: get-private-key
 	ssh -i ssh-key ubuntu@$$(terraform output -raw control_plane_public_ip)
 
+ssh-worker:
+	test -n "$(INDEX)"
+	$(MAKE) get-private-key
+	ssh -i ssh-key ubuntu@$(shell terraform output -json worker_public_ip | jq '.[${INDEX}]')
+
 regenerate-docs:
 	terraform-docs markdown table --output-file README.md .
