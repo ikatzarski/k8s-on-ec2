@@ -6,11 +6,11 @@
 HOSTNAME="${hostname}"
 CONTROL_PLANE_PRIVATE_IP="${control_plane_private_ip}"
 CONTROL_PLANE_HOSTNAME="${control_plane_hostname}"
-CONTROL_PLANE_EXPECTED_HOSTNAME="control-plane"
 WORKER_1_PRIVATE_IP="${worker_1_private_ip}"
 WORKER_1_HOSTNAME="${worker_1_hostname}"
 WORKER_2_PRIVATE_IP="${worker_2_private_ip}"
 WORKER_2_HOSTNAME="${worker_2_hostname}"
+TOKEN="${token}"
 
 #############################
 ########## HOST CONFIGURATION
@@ -70,13 +70,15 @@ install_cri_prerequisites() {
 
 add_docker_gpg_key() {
   mkdir -m 0755 -p /etc/apt/keyrings
-  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+  curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+  chmod a+r /etc/apt/keyrings/docker.asc
 }
 
 add_docker_apt_repo() {
   echo \
-    "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-  $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list >/dev/null
+    "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+    $(. /etc/os-release && echo "$VERSION_CODENAME") stable" |
+    tee /etc/apt/sources.list.d/docker.list >/dev/null
   apt update
 }
 
@@ -113,11 +115,11 @@ install_kubeadm_prerequisites() {
 }
 
 add_gcp_gpg_key() {
-  curl -fsSLo /etc/apt/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+  curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 }
 
 add_kubernetes_apt_repo() {
-  echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list
+  echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.29/deb/ /' | tee /etc/apt/sources.list.d/kubernetes.list
 }
 
 install_kubelet_kubeadm_kubectl() {
@@ -139,7 +141,7 @@ SET_UP_KUBEADM() {
 ########## CONTROL PLANE CONFIGURATION
 
 initialize_the_control_plane() {
-  kubeadm init
+  kubeadm init --token $TOKEN
 }
 
 create_ubuntu_kube_config() {
@@ -171,15 +173,19 @@ SET_UP_CNI() {
 ########## ADDITIONAL TOOLS
 
 install_helm() {
-  curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | tee /usr/share/keyrings/helm.gpg >/dev/null
-  apt install apt-transport-https --yes
-  echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list
+  curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+  chmod 700 get_helm.sh
+  ./get_helm.sh
+}
+
+install_other_tools() {
   apt update
-  apt install helm
+  apt install -y netcat
 }
 
 SET_UP_ADDITIONAL_TOOLS() {
   install_helm
+  install_other_tools
 }
 
 #####################
@@ -189,8 +195,16 @@ SET_UP_HOST
 SET_UP_CRI
 SET_UP_KUBEADM
 
-if [[ $(hostname) == "$CONTROL_PLANE_EXPECTED_HOSTNAME" ]]; then
+if [[ $HOSTNAME == "control-plane" ]]; then
   SET_UP_CONTROL_PLANE
   SET_UP_CNI
   SET_UP_ADDITIONAL_TOOLS
+else
+  API_SERVER_PORT=6443
+  while ! nc -z "$CONTROL_PLANE_PRIVATE_IP" $API_SERVER_PORT; do
+    echo "Port $API_SERVER_PORT is not open on $CONTROL_PLANE_PRIVATE_IP ($CONTROL_PLANE_HOSTNAME). Waiting..."
+    sleep 5
+  done
+
+  kubeadm join "$CONTROL_PLANE_PRIVATE_IP":$API_SERVER_PORT --token "$TOKEN" --discovery-token-unsafe-skip-ca-verification
 fi

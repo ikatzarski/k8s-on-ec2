@@ -13,3 +13,9 @@ output "private_key" {
   value       = tls_private_key.main.private_key_pem
   sensitive   = true
 }
+
+output "k8s_token" {
+  description = "The token used to join workers to the control plane."
+  value       = "${random_password.token_start.result}.${random_password.token_end.result}"
+  sensitive   = true
+}

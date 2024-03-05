@@ -13,6 +13,7 @@
 | Name | Version |
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | 5.39.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | 3.6.0 |
 | <a name="provider_tls"></a> [tls](#provider\_tls) | 4.0.5 |
 
 ## Modules
@@ -29,6 +30,8 @@
 | Name | Type |
 |------|------|
 | [aws_key_pair.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/key_pair) | resource |
+| [random_password.token_end](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
+| [random_password.token_start](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
 | [tls_private_key.main](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key) | resource |
 
 ## Inputs
@@ -51,6 +54,7 @@
 | Name | Description |
 |------|-------------|
 | <a name="output_control_plane_public_ip"></a> [control\_plane\_public\_ip](#output\_control\_plane\_public\_ip) | Public IP of the Control Plane. |
+| <a name="output_k8s_token"></a> [k8s\_token](#output\_k8s\_token) | The token used to join workers to the control plane. |
 | <a name="output_private_key"></a> [private\_key](#output\_private\_key) | The private key needed to SSH into the nodes. |
 | <a name="output_worker_public_ip"></a> [worker\_public\_ip](#output\_worker\_public\_ip) | Public IP of the Workers. |
 <!-- END_TF_DOCS -->
@@ -64,16 +68,6 @@ If this is the first time starting the node, make sure the `bootstrap.sh` script
 ```bash
 tail -f /var/log/cloud-init-output.log
 ```
-
-## Join the Worker Nodes to the Control Plane
-
-Get a new token and a command to join new Worker Nodes to the Control Plane by executing the following command on the Control Plane node:
-
-```bash
-kubeadm token create --print-join-command
-```
-
-Execute the printed out command on each EC2 instance that will be a Worker Node. The command would require `sudo` privileges.
 
 ## Install NGINX Ingress
 

@@ -45,3 +45,17 @@ variable "volume_size" {
   description = "Size of the volume in gibibytes (GiB)."
   default     = 50
 }
+
+variable "user_data_variables" {
+  description = "Variables passed to the user data script."
+  type = object({
+    hostname                 = string
+    control_plane_private_ip = string
+    control_plane_hostname   = string
+    worker_1_private_ip      = string
+    worker_1_hostname        = string
+    worker_2_private_ip      = string
+    worker_2_hostname        = string
+    token                    = string
+  })
+}

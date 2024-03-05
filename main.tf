@@ -24,6 +24,18 @@ resource "aws_key_pair" "main" {
   public_key = tls_private_key.main.public_key_openssh
 }
 
+resource "random_password" "token_start" {
+  length  = 6
+  special = false
+  upper   = false
+}
+
+resource "random_password" "token_end" {
+  length  = 16
+  special = false
+  upper   = false
+}
+
 module "control_plane" {
   source = "./modules/node"
 
@@ -33,6 +45,16 @@ module "control_plane" {
   subnet_id              = module.network.public_subnet_id
   vpc_security_group_ids = [module.security.control_plane_security_group_id]
   private_ip             = var.control_plane_private_ip
+  user_data_variables = {
+    hostname                 = "control-plane"
+    control_plane_private_ip = var.control_plane_private_ip
+    control_plane_hostname   = "control-plane"
+    worker_1_private_ip      = "${var.worker_private_ip_start}${var.worker_suffixes[0]}"
+    worker_1_hostname        = "worker-${var.worker_suffixes[0]}"
+    worker_2_private_ip      = "${var.worker_private_ip_start}${var.worker_suffixes[1]}"
+    worker_2_hostname        = "worker-${var.worker_suffixes[1]}"
+    token                    = "${random_password.token_start.result}.${random_password.token_end.result}"
+  }
 }
 
 module "worker" {
@@ -45,4 +67,14 @@ module "worker" {
   subnet_id              = module.network.public_subnet_id
   vpc_security_group_ids = [module.security.worker_security_group_id]
   private_ip             = "${var.worker_private_ip_start}${each.key}"
+  user_data_variables = {
+    hostname                 = "worker-${each.key}"
+    control_plane_private_ip = var.control_plane_private_ip
+    control_plane_hostname   = "control-plane"
+    worker_1_private_ip      = "${var.worker_private_ip_start}${var.worker_suffixes[0]}"
+    worker_1_hostname        = "worker-${var.worker_suffixes[0]}"
+    worker_2_private_ip      = "${var.worker_private_ip_start}${var.worker_suffixes[1]}"
+    worker_2_hostname        = "worker-${var.worker_suffixes[1]}"
+    token                    = "${random_password.token_start.result}.${random_password.token_end.result}"
+  }
 }

@@ -40,12 +40,6 @@ variable "control_plane_private_ip" {
   default     = "172.31.1.10"
 }
 
-# variable "control_plane_hostname" {
-#   type        = string
-#   description = "Hostname the Control Plane."
-#   default     = "control-plane"
-# }
-
 variable "worker_suffixes" {
   type        = list(string)
   description = "The suffix appended to worker names and IPs."
@@ -57,18 +51,6 @@ variable "worker_private_ip_start" {
   description = "The beginning of each worker's private IP."
   default     = "172.31.1."
 }
-
-# variable "worker_1_hostname" {
-#   type        = string
-#   description = "Hostname of Worker 1 Node."
-#   default     = "worker-1"
-# }
-
-# variable "worker_2_hostname" {
-#   type        = string
-#   description = "Hostname of Worker 2 Node."
-#   default     = "worker-2"
-# }
 
 variable "ingress_access_cidr" {
   type        = string
